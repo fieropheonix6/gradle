@@ -16,8 +16,10 @@
 
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
+
 public class NoMatchingArtifactVariantsException extends ArtifactVariantSelectionException {
-    public NoMatchingArtifactVariantsException(String message) {
-        super(message);
+    public NoMatchingArtifactVariantsException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
     }
 }

@@ -15,8 +15,11 @@
  */
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
+
 public class AmbiguousGraphVariantsException extends AbstractGraphVariantSelectionException {
-    public AmbiguousGraphVariantsException(String message) {
-        super(message);
+    public AmbiguousGraphVariantsException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
+        addResolution("See the documentation on ambiguity errors at " + documentationRegistry.getDocumentationFor("variant_model", "sub:variant-ambiguity" + "."));
     }
 }

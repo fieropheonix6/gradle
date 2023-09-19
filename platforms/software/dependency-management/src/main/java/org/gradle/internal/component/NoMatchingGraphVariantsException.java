@@ -16,8 +16,11 @@
 
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
+
 public class NoMatchingGraphVariantsException extends AbstractGraphVariantSelectionException {
-    public NoMatchingGraphVariantsException(String message) {
-        super(message);
+    public NoMatchingGraphVariantsException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
+        addResolution("See the documentation on no matching variant errors at " + documentationRegistry.getDocumentationFor("variant_model", "sub:variant-no-match" + "."));
     }
 }

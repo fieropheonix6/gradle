@@ -23,6 +23,7 @@ import org.gradle.api.attributes.Attribute;
 import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.attributes.AttributesSchema;
 import org.gradle.api.capabilities.Capability;
+import org.gradle.api.internal.DocumentationRegistry;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.BrokenResolvedArtifactSet;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariant;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariantSet;
@@ -70,16 +71,20 @@ import static org.gradle.internal.exceptions.StyledException.style;
  */
 public class SelectionFailureHandler {
     private static final String FAILURE_TYPE = "Variant Selection Failure";
-    private final Problems problemsService;
 
-    public SelectionFailureHandler(Problems problemsService) {
+    private final Problems problemsService;
+    private final DocumentationRegistry documentationRegistry;
+
+    public SelectionFailureHandler(Problems problemsService, DocumentationRegistry documentationRegistry) {
         this.problemsService = problemsService;
+        this.documentationRegistry = documentationRegistry;
     }
 
     // region Artifact Variant Selection Failures
     public NoMatchingArtifactVariantsException noMatchingArtifactVariantFailure(AttributesSchema schema, String displayName, ImmutableAttributes componentRequested, List<? extends ResolvedVariant> variants, AttributeMatcher matcher, AttributeDescriber attributeDescriber) {
         String message = buildNoMatchingVariantsFailureMsg(displayName, componentRequested, variants, matcher, attributeDescriber);
-        NoMatchingArtifactVariantsException e = new NoMatchingArtifactVariantsException(message);
+        NoMatchingArtifactVariantsException e = new NoMatchingArtifactVariantsException(message, documentationRegistry);
+        e.addResolution("Try to match something that exists.");
 
 //        problemsService.createProblemBuilder()
 //            .label("No matching variants found")
@@ -95,7 +100,7 @@ public class SelectionFailureHandler {
 
     public AmbiguousArtifactVariantsException ambiguousArtifactVariantsFailure(AttributesSchema schema, String displayName, ImmutableAttributes componentRequested, List<? extends ResolvedVariant> matches, AttributeMatcher matcher, Set<ResolvedVariant> discarded, AttributeDescriber attributeDescriber) {
         String message = buildMultipleMatchingVariantsFailureMsg(attributeDescriber, displayName, componentRequested, matches, matcher, discarded);
-        AmbiguousArtifactVariantsException e = new AmbiguousArtifactVariantsException(message);
+        AmbiguousArtifactVariantsException e = new AmbiguousArtifactVariantsException(message, documentationRegistry);
 
 //        problemsService.createProblemBuilder()
 //            .label("Multiple matching variants found")
@@ -111,7 +116,7 @@ public class SelectionFailureHandler {
 
     public AmbiguousArtifactTransformException ambiguousArtifactTransformationFailure(AttributesSchema schema, String displayName, ImmutableAttributes componentRequested, List<TransformedVariant> transformedVariants) {
         String message = buildAmbiguousTransformMsg(displayName, componentRequested, transformedVariants);
-        AmbiguousArtifactTransformException e = new AmbiguousArtifactTransformException(message);
+        AmbiguousArtifactTransformException e = new AmbiguousArtifactTransformException(message, documentationRegistry);
 
 //        problemsService.createProblemBuilder()
 //            .label("Ambiguous artifact transformation")
@@ -139,7 +144,7 @@ public class SelectionFailureHandler {
     }
 
     public BrokenResolvedArtifactSet unknownArtifactVariantSelectionFailure(AttributesSchema schema, ResolvedVariantSet producer, Exception t) {
-        return unknownArtifactVariantSelectionFailure(schema, ArtifactVariantSelectionException.selectionFailed(producer, t));
+        return unknownArtifactVariantSelectionFailure(schema, ArtifactVariantSelectionException.selectionFailed(producer, documentationRegistry, t));
     }
 
     private String buildNoMatchingVariantsFailureMsg(
@@ -236,7 +241,7 @@ public class SelectionFailureHandler {
         Set<VariantGraphResolveState> discarded
     ) {
         String message = buildAmbiguousGraphVariantsFailureMsg(new StyledDescriber(describer), fromConfigurationAttributes, attributeMatcher, matches, targetComponent, variantAware, discarded);
-        AmbiguousGraphVariantsException e = new AmbiguousGraphVariantsException(message);
+        AmbiguousGraphVariantsException e = new AmbiguousGraphVariantsException(message, documentationRegistry);
 
 //        problemsService.createProblemBuilder()
 //            .label("Multiple matching configurations found")
@@ -259,7 +264,7 @@ public class SelectionFailureHandler {
         AttributeDescriber describer
     ) {
         String message = buildIncompatibleGraphVariantsFailureMsg(fromConfigurationAttributes, attributeMatcher, targetComponent, targetConfiguration, variantAware, describer);
-        IncompatibleGraphVariantsException e = new IncompatibleGraphVariantsException(message);
+        IncompatibleGraphVariantsException e = new IncompatibleGraphVariantsException(message, documentationRegistry);
 
 //        problemsService.createProblemBuilder()
 //            .label("Configuration does not match consumer attributes")
@@ -281,7 +286,7 @@ public class SelectionFailureHandler {
         GraphSelectionCandidates candidates
     ) {
         String message = buildNoMatchingGraphVariantSelectionFailureMsg(new StyledDescriber(describer), fromConfigurationAttributes, attributeMatcher, targetComponent, candidates);
-        NoMatchingGraphVariantsException e = new NoMatchingGraphVariantsException(message);
+        NoMatchingGraphVariantsException e = new NoMatchingGraphVariantsException(message, documentationRegistry);
 
 //        problemsService.createProblemBuilder()
 //            .label("No matching configuration found")
@@ -297,7 +302,7 @@ public class SelectionFailureHandler {
 
     public NoMatchingCapabilitiesException noMatchingCapabilitiesFailure(ComponentGraphResolveMetadata targetComponent, Collection<? extends Capability> requestedCapabilities, List<? extends VariantGraphResolveState> candidates) {
         String message = buildNoMatchingCapabilitiesFailureMsg(targetComponent, requestedCapabilities, candidates);
-        NoMatchingCapabilitiesException e = new NoMatchingCapabilitiesException(message);
+        NoMatchingCapabilitiesException e = new NoMatchingCapabilitiesException(message, documentationRegistry);
 
 //        problemsService.createProblemBuilder()
 //            .label("No matching variant found for requested capabilities")

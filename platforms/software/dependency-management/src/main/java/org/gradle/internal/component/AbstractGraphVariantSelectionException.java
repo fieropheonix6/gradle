@@ -16,14 +16,16 @@
 
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
 import org.gradle.internal.component.model.GraphVariantSelector;
+import org.gradle.internal.exceptions.ResolutionProvider;
 
 /**
  * Abstract base class of exceptions thrown by the {@link SelectionFailureHandler} when a variant of a component cannot be selected
  * by the {@link GraphVariantSelector}.
  */
-public abstract class AbstractGraphVariantSelectionException extends AbstractVariantSelectionException {
-    public AbstractGraphVariantSelectionException(String message) {
-        super(message);
+public abstract class AbstractGraphVariantSelectionException extends AbstractVariantSelectionException implements ResolutionProvider {
+    public AbstractGraphVariantSelectionException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
     }
 }

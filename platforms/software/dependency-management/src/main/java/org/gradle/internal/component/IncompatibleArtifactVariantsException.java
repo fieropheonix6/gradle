@@ -15,8 +15,10 @@
  */
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
+
 public class IncompatibleArtifactVariantsException extends ArtifactVariantSelectionException {
-    public IncompatibleArtifactVariantsException(String message) {
-        super(message);
+    public IncompatibleArtifactVariantsException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
     }
 }

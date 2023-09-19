@@ -381,8 +381,8 @@ class DependencyManagementBuildScopeServices {
         };
     }
 
-    SelectionFailureHandler createVariantSelectionFailureProcessor(Problems problems) {
-        return new SelectionFailureHandler(problems);
+    SelectionFailureHandler createVariantSelectionFailureProcessor(Problems problems, DocumentationRegistry documentationRegistry) {
+        return new SelectionFailureHandler(problems, documentationRegistry);
     }
 
     GraphVariantSelector createGraphVariantSelector(SelectionFailureHandler selectionFailureHandler) {

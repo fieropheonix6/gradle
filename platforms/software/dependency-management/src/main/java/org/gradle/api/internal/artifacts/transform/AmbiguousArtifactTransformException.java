@@ -16,10 +16,11 @@
 
 package org.gradle.api.internal.artifacts.transform;
 
+import org.gradle.api.internal.DocumentationRegistry;
 import org.gradle.internal.component.ArtifactVariantSelectionException;
 
 public class AmbiguousArtifactTransformException extends ArtifactVariantSelectionException {
-    public AmbiguousArtifactTransformException(String message) {
-        super(message);
+    public AmbiguousArtifactTransformException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
     }
 }

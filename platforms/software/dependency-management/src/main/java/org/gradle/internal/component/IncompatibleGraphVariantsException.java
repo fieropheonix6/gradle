@@ -16,8 +16,13 @@
 
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
+
 public class IncompatibleGraphVariantsException extends AbstractGraphVariantSelectionException {
-    public IncompatibleGraphVariantsException(String message) {
-        super(message);
+    public static final String INCOMPATIBLE_VARIANTS_PREFIX = "See the documentation on incompatible variant errors at ";
+
+    public IncompatibleGraphVariantsException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
+        addResolution(INCOMPATIBLE_VARIANTS_PREFIX + documentationRegistry.getDocumentationFor("variant_model", "sub:variant-incompatible") + ".");
     }
 }

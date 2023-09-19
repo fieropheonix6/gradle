@@ -24,6 +24,7 @@ import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeCompatibilityRule
 import org.gradle.api.attributes.CompatibilityCheckDetails
+import org.gradle.api.internal.DocumentationRegistry
 import org.gradle.api.internal.artifacts.DefaultModuleIdentifier
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.excludes.ModuleExclusions
 import org.gradle.api.internal.attributes.AttributeContainerInternal
@@ -32,6 +33,7 @@ import org.gradle.api.internal.attributes.DefaultAttributesSchema
 import org.gradle.api.internal.attributes.ImmutableAttributes
 import org.gradle.api.internal.attributes.ImmutableAttributesFactory
 import org.gradle.api.internal.capabilities.CapabilitiesMetadataInternal
+import org.gradle.internal.component.AbstractVariantSelectionException
 import org.gradle.internal.component.AmbiguousGraphVariantsException
 import org.gradle.internal.component.IncompatibleGraphVariantsException
 import org.gradle.internal.component.SelectionFailureHandler
@@ -49,12 +51,14 @@ import static org.gradle.util.internal.TextUtil.toPlatformLineSeparators
 class LocalComponentDependencyMetadataTest extends Specification {
     AttributesSchemaInternal attributesSchema
     ImmutableAttributesFactory factory
+    DocumentationRegistry documentationRegistry
     GraphVariantSelector variantSelector
 
     def setup() {
         attributesSchema = new DefaultAttributesSchema(TestUtil.instantiatorFactory(), SnapshotTestUtil.isolatableFactory())
         factory = AttributeTestUtil.attributesFactory()
-        variantSelector = new GraphVariantSelector(new SelectionFailureHandler(createTestProblems()))
+        documentationRegistry = new DocumentationRegistry()
+        variantSelector = new GraphVariantSelector(new SelectionFailureHandler(createTestProblems(), documentationRegistry))
     }
 
     def "returns this when same target requested"() {
@@ -110,8 +114,6 @@ class LocalComponentDependencyMetadataTest extends Specification {
             getMetadata() >> toComponentMetadata
         }
         defaultConfiguration(toComponent, attributes(key: 'nothing'))
-        attributesSchema.attribute(Attribute.of('key', String))
-        attributesSchema.attribute(Attribute.of('will', String))
 
         when:
         dep.selectVariants(variantSelector, attributes(key: 'other'), toComponent, attributesSchema, [] as Set)*.name as Set
@@ -121,6 +123,8 @@ class LocalComponentDependencyMetadataTest extends Specification {
         e.message == toPlatformLineSeparators("""Configuration 'default' in [target] does not match the consumer attributes
 Configuration 'default':
   - Incompatible because this component declares attribute 'key' with value 'nothing' and the consumer needed attribute 'key' with value 'other'""")
+        e.getResolutions().contains(AbstractVariantSelectionException.DEFAULT_MESSAGE_PREFIX + documentationRegistry.getDocumentationFor("variant_attributes", "sec:abm_algorithm") + ".")
+        e.getResolutions().contains(IncompatibleGraphVariantsException.INCOMPATIBLE_VARIANTS_PREFIX + documentationRegistry.getDocumentationFor("variant_model", "sub:variant-incompatible") + ".")
     }
 
     def "revalidates explicit configuration selection if it has attributes"() {

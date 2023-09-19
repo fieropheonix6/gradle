@@ -22,7 +22,7 @@ import org.gradle.integtests.fixtures.AbstractIntegrationSpec
  * variant selection failures.
  */
 class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
-    def "demonstrate project ambiguous variant selection failure #dsl"() {
+    def "demonstrate project ambiguous variant selection failure"() {
         buildKotlinFile << """
             ${setupAmbiguousVariantSelectionFailureForProject()}
             ${forceConsumerResolution()}
@@ -32,6 +32,18 @@ class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
         fails "forceResolution"
         failure.assertHasDescription("Could not determine the dependencies of task ':forceResolution'.")
         failure.assertHasErrorOutput("The consumer was configured to find attribute 'color' with value 'blue'. However we cannot choose between the following variants of project ::")
+    }
+
+    def "demonstrate incompatible graph variants selection failure"() {
+        buildKotlinFile << """
+            ${setupIncompatibleVariantsSelectionFailureForProject()}
+            ${forceConsumerResolution()}
+        """
+
+        expect:
+        fails "outgoingVariants", "forceResolution"
+        failure.assertHasDescription("Could not determine the dependencies of task ':forceResolution'.")
+        failure.assertHasErrorOutput("Incompatible because this component declares attribute 'color' with value 'blue' and the consumer needed attribute 'color' with value 'green'")
     }
 
     private String setupAmbiguousVariantSelectionFailureForProject() {
@@ -50,8 +62,10 @@ class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
                     attributes.attribute(shape, "square")
                     outgoing.artifact(file("a2.jar"))
                 }
+
                 dependencyScope("blueFilesDependencies")
-                resolvable("blueFiles") {
+
+                resolvable("resolveMe") {
                     extendsFrom(configurations.getByName("blueFilesDependencies"))
                     attributes.attribute(color, "blue")
                 }
@@ -63,10 +77,37 @@ class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
         """
     }
 
+    private String setupIncompatibleVariantsSelectionFailureForProject() {
+        return """
+            plugins {
+                id("base")
+            }
+
+            val color = Attribute.of("color", String::class.java)
+
+            configurations {
+                val default by getting {
+                    attributes.attribute(color, "blue")
+                }
+
+                dependencyScope("defaultDependencies")
+
+                resolvable("resolveMe") {
+                    extendsFrom(configurations.getByName("defaultDependencies"))
+                    attributes.attribute(color, "green")
+                }
+            }
+
+            dependencies {
+                add("defaultDependencies", project(":"))
+            }
+        """
+    }
+
     private String forceConsumerResolution() {
         return """
             val forceResolution by tasks.registering {
-                inputs.files(configurations.getByName("blueFiles"))
+                inputs.files(configurations.getByName("resolveMe"))
             }
         """
     }
