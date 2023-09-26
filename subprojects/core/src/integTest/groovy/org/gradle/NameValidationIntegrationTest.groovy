@@ -37,6 +37,7 @@ class NameValidationIntegrationTest extends AbstractIntegrationSpec {
 
     def "subproject names must not contain forbidden characters"() {
         given:
+        createDirs("folder", "folder/name|with|pipes")
         settingsFile << "include 'folder:name|with|pipes'"
 
         when:

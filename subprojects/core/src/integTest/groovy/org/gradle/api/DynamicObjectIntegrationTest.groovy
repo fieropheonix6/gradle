@@ -75,7 +75,7 @@ class DynamicObjectIntegrationTest extends AbstractIntegrationSpec {
 
     @ToBeFixedForConfigurationCache(because = "Task.getProject() during execution")
     def canAddDynamicMethodsToProject() {
-
+        createDirs("child")
         file("settings.gradle").writelns("include 'child'")
         file("build.gradle").writelns(
                 "def rootMethod(p) { 'root' + p }",
@@ -151,7 +151,7 @@ class ExtensionBean {
     }
 
     def canAddPropertiesToProjectUsingGradlePropertiesFile() {
-
+        createDirs("child")
         file("settings.gradle").writelns("include 'child'")
         file("gradle.properties") << '''
 global=some value
@@ -445,6 +445,7 @@ assert 'overridden value' == global
     }
 
     def canAddMethodsUsingAPropertyWhoseValueIsAClosure() {
+        createDirs("child1", "child2")
         file("settings.gradle").writelns("include 'child1', 'child2'");
         buildFile """
             class Thing {
@@ -486,7 +487,7 @@ assert 'overridden value' == global
     }
 
     def canInjectMethodsFromParentProject() {
-
+        createDirs("child1", "child2")
         file("settings.gradle").writelns("include 'child1', 'child2'");
         buildFile """
             subprojects {

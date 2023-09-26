@@ -27,6 +27,7 @@ class AutoTestedSamplesCoreApiIntegrationTest extends AbstractAutoTestedSamplesT
         file('subprojects/abc').createDir()
 
         // for example in DependencySubstitutions.java
+        createDirs("api", "util")
         file("settings.gradle") << """
             include 'api', 'util'
         """

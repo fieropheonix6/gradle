@@ -109,7 +109,7 @@ assert 'value' == doStuff.someProp
 
     @Test
     void canExecuteExternalScriptFromSettingsScript() {
-
+        createDirs("child")
         testFile('settings.gradle') << ''' apply { from 'other.gradle' } '''
         testFile('other.gradle') << ''' include 'child' '''
         testFile('build.gradle') << ''' assert ['child'] == subprojects*.name '''
@@ -162,6 +162,7 @@ assert 'value' == doStuff.someProp
 
     @Test
     void cachesScriptClassForAGivenScript() {
+        createDirs("a", "b")
         testFile('settings.gradle') << 'include \'a\', \'b\''
         testFile('external.gradle') << 'ext.appliedScript = this'
         testFile('build.gradle') << '''

@@ -782,6 +782,7 @@ class CachedCustomTaskExecutionIntegrationTest extends AbstractIntegrationSpec i
         def projectNames = GroovyCollections.combinations(('a'..'p'), ('a'..'p'), ('a'..'d'))*.join("")
         println "Running with ${projectNames.size()} projects"
         projectNames.each { projectName ->
+            createDirs(projectName as String)
             settingsFile << "include '$projectName'\n"
         }
 
