@@ -1598,6 +1598,7 @@ Class <org.gradle.groovy.scripts.internal.BuildScriptTransformer$1> is not annot
 Class <org.gradle.groovy.scripts.internal.BuildScriptTransformer> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (BuildScriptTransformer.java:0)
 Class <org.gradle.groovy.scripts.internal.CompileOperation> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (CompileOperation.java:0)
 Class <org.gradle.groovy.scripts.internal.CompiledScript> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (CompiledScript.java:0)
+Class <org.gradle.groovy.scripts.internal.CompoundAssignmentTransformer$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (CompoundAssignmentTransformer.java:0)
 Class <org.gradle.groovy.scripts.internal.CrossBuildInMemoryCachingScriptClassCache$CachedCompiledScript> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (CrossBuildInMemoryCachingScriptClassCache.java:0)
 Class <org.gradle.groovy.scripts.internal.CrossBuildInMemoryCachingScriptClassCache> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (CrossBuildInMemoryCachingScriptClassCache.java:0)
 Class <org.gradle.groovy.scripts.internal.CustomCompilationUnit$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (CustomCompilationUnit.java:0)
