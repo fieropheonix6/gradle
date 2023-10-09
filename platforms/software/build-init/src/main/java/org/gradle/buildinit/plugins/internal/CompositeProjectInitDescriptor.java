@@ -100,7 +100,7 @@ public class CompositeProjectInitDescriptor implements BuildInitializer {
 
     @Override
     public void generate(InitSettings settings) {
-        BuildContentGenerationContext buildContentGenerationContext = new BuildContentGenerationContext(new VersionCatalogDependencyRegistry());
+        BuildContentGenerationContext buildContentGenerationContext = new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(false));
         for (BuildContentGenerator generator : generators) {
             generator.generate(settings, buildContentGenerationContext);
         }
@@ -109,7 +109,7 @@ public class CompositeProjectInitDescriptor implements BuildInitializer {
     }
 
     public Map<String, List<String>> generateWithExternalComments(InitSettings settings) {
-        BuildContentGenerationContext buildContentGenerationContext = new BuildContentGenerationContext(new VersionCatalogDependencyRegistry());
+        BuildContentGenerationContext buildContentGenerationContext = new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(false));
         if (!(descriptor instanceof LanguageSpecificAdaptor)) {
             throw new UnsupportedOperationException();
         }

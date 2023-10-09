@@ -23,10 +23,10 @@ class VersionCatalogDependencyRegistryTest extends Specification {
 
     def "tracks library versions"() {
         setup:
-        def registry = new VersionCatalogDependencyRegistry()
+        def registry = new VersionCatalogDependencyRegistry(true)
 
         when:
-        registry.registerLibrary(true, "group:artifact", "1.1")
+        registry.registerLibrary("group:artifact", "1.1")
 
         then:
         registry.versions[0].alias == "group-artifact"
@@ -40,11 +40,11 @@ class VersionCatalogDependencyRegistryTest extends Specification {
 
     def "merges multiple libraries when encountering identical coordinates"() {
         setup:
-        def registry = new VersionCatalogDependencyRegistry()
+        def registry = new VersionCatalogDependencyRegistry(true)
 
         when:
-        registry.registerLibrary(true, "group:artifact", "1.1")
-        registry.registerLibrary(true, "group:artifact", "1.1")
+        registry.registerLibrary("group:artifact", "1.1")
+        registry.registerLibrary("group:artifact", "1.1")
 
         then:
         registry.versions.size() == 1
@@ -60,11 +60,11 @@ class VersionCatalogDependencyRegistryTest extends Specification {
 
     def "stores different versions"() {
         setup:
-        def registry = new VersionCatalogDependencyRegistry()
+        def registry = new VersionCatalogDependencyRegistry(true)
 
         when:
-        registry.registerLibrary(true, "group:artifact", "1.1")
-        registry.registerLibrary(true, "group:artifact", "1.2")
+        registry.registerLibrary("group:artifact", "1.1")
+        registry.registerLibrary("group:artifact", "1.2")
 
         then:
         registry.versions.size() == 2
@@ -82,7 +82,7 @@ class VersionCatalogDependencyRegistryTest extends Specification {
     @Unroll
     def "deals with reserved aliases"() {
         expect:
-        new VersionCatalogDependencyRegistry().registerLibrary(true, module, "42") == alias
+        new VersionCatalogDependencyRegistry(true).registerLibrary(module, "42") == alias
 
         where:
         module || alias
@@ -101,7 +101,7 @@ class VersionCatalogDependencyRegistryTest extends Specification {
     @Unroll
     def "fully qualified or artifact only libraries"() {
         expect:
-        new VersionCatalogDependencyRegistry().registerLibrary(fullyQualify, module, "42") == alias
+        new VersionCatalogDependencyRegistry(fullyQualify).registerLibrary(module, "42") == alias
 
         where:
         fullyQualify | module || alias
@@ -114,7 +114,7 @@ class VersionCatalogDependencyRegistryTest extends Specification {
     @Unroll
     def "fully qualified or shortened plugins"() {
         expect:
-        new VersionCatalogDependencyRegistry().registerPlugin(fullyQualify, module, "42") == alias
+        new VersionCatalogDependencyRegistry(fullyQualify).registerPlugin(module, "42") == alias
 
         where:
         fullyQualify | module || alias

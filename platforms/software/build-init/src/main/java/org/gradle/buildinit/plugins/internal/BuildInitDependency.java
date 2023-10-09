@@ -21,36 +21,30 @@ import org.gradle.api.NonNullApi;
 import javax.annotation.Nullable;
 
 /**
- * DAO for use with version catalog generation to encode module, version and if generated aliases should be shortened or qualified.
+ * Data object for use with version catalog generation to encode module, version and if generated aliases should be shortened or qualified.
  */
 @NonNullApi
 public class BuildInitDependency {
     final String module;
     final String version;
-    final boolean fullyQualifyAliases;
-    private BuildInitDependency(String module, @Nullable String version, boolean fullyQualifyAliases) {
+    private BuildInitDependency(String module, @Nullable String version) {
         this.module = module;
         this.version = version;
-        this.fullyQualifyAliases = fullyQualifyAliases;
     }
 
     public static BuildInitDependency of(String module, String version) {
-        return new BuildInitDependency(module, version, false);
+        return new BuildInitDependency(module, version);
     }
 
     public static BuildInitDependency of(String group, String artifact, String version) {
-        return new BuildInitDependency(group + ":" + artifact, version, true);
+        return new BuildInitDependency(group + ":" + artifact, version);
     }
 
     public static BuildInitDependency of(String module) {
-        return new BuildInitDependency(module, null, false);
+        return new BuildInitDependency(module, null);
     }
 
     public String toNotation() {
         return module + (version != null ? ":" + version : "");
-    }
-
-    public boolean isFullyQualifyAliases() {
-        return fullyQualifyAliases;
     }
 }

@@ -38,14 +38,12 @@ class VersionCatalogGeneratorTest extends Specification {
 
     def setup() {
         target.getAsFile() >> tmpDir.file(".")
-        versionCatalogDependencyRegistry = new VersionCatalogDependencyRegistry()
+        versionCatalogDependencyRegistry = new VersionCatalogDependencyRegistry(true)
         buildContentGenerationContext = new BuildContentGenerationContext(versionCatalogDependencyRegistry)
         versionCatalogGenerator = VersionCatalogGenerator.create(target)
     }
 
     def "generates empty gradle/libs.versions.toml file for empty registry"() {
-        setup:
-
         when:
         versionCatalogGenerator.generate(buildContentGenerationContext)
 
@@ -56,8 +54,7 @@ class VersionCatalogGeneratorTest extends Specification {
 
     def "generates version and library based on module"() {
         setup:
-        versionCatalogDependencyRegistry.registerLibrary(true, "com.example.group:long", "v1")
-        versionCatalogDependencyRegistry.registerLibrary(false, "com.example.group:short", "v2")
+        versionCatalogDependencyRegistry.registerLibrary("com.example.group:long", "v1")
 
         when:
         versionCatalogGenerator.generate(buildContentGenerationContext)
@@ -67,19 +64,16 @@ class VersionCatalogGeneratorTest extends Specification {
         versionCatalogFile.text == toPlatformLineSeparators("""$COMMON_START
 [versions]
 com-example-group-long = "v1"
-short = "v2"
 
 [libraries]
 com-example-group-long = { module = "com.example.group:long", version.ref = "com-example-group-long" }
-short = { module = "com.example.group:short", version.ref = "short" }
 """)
     }
 
     def "merges multiple libraries when encountering identical coordinates"() {
         setup:
-        versionCatalogDependencyRegistry.registerLibrary(true, "group:artifact", "1.1")
-        versionCatalogDependencyRegistry.registerLibrary(true, "group:artifact", "1.1")
-        versionCatalogDependencyRegistry.registerLibrary(false, "group:artifact", "1.1")
+        versionCatalogDependencyRegistry.registerLibrary("group:artifact", "1.1")
+        versionCatalogDependencyRegistry.registerLibrary("group:artifact", "1.1")
 
         when:
         versionCatalogGenerator.generate(buildContentGenerationContext)
@@ -97,10 +91,8 @@ group-artifact = { module = "group:artifact", version.ref = "group-artifact" }
 
     def "generates multiple versions when encountering different versions"() {
         setup:
-        versionCatalogDependencyRegistry.registerLibrary(true, "group:long", "1.1")
-        versionCatalogDependencyRegistry.registerLibrary(true, "group:long", "1.2")
-        versionCatalogDependencyRegistry.registerLibrary(false, "group:short", "1.1")
-        versionCatalogDependencyRegistry.registerLibrary(false, "group:short", "1.2")
+        versionCatalogDependencyRegistry.registerLibrary("group:long", "1.1")
+        versionCatalogDependencyRegistry.registerLibrary("group:long", "1.2")
 
         when:
         versionCatalogGenerator.generate(buildContentGenerationContext)
@@ -111,23 +103,17 @@ group-artifact = { module = "group:artifact", version.ref = "group-artifact" }
 [versions]
 group-long = "1.1"
 group-long-x1 = "1.2"
-short = "1.1"
-short-x1 = "1.2"
 
 [libraries]
 group-long = { module = "group:long", version.ref = "group-long" }
 group-long-x1 = { module = "group:long", version.ref = "group-long-x1" }
-short = { module = "group:short", version.ref = "short" }
-short-x1 = { module = "group:short", version.ref = "short-x1" }
 """)
     }
 
     def "generates valid identifiers"() {
         setup:
-        versionCatalogDependencyRegistry.registerLibrary(true, "JUnit:something", "4")
-        versionCatalogDependencyRegistry.registerLibrary(true, "group:artifact_5", "1.1.1")
-        versionCatalogDependencyRegistry.registerLibrary(false, "something:JUnit", "4")
-        versionCatalogDependencyRegistry.registerLibrary(false, "something:artifact_5", "1.1.1")
+        versionCatalogDependencyRegistry.registerLibrary("JUnit:something", "4")
+        versionCatalogDependencyRegistry.registerLibrary("group:artifact_5", "1.1.1")
 
         when:
         versionCatalogGenerator.generate(buildContentGenerationContext)
@@ -136,23 +122,18 @@ short-x1 = { module = "group:short", version.ref = "short-x1" }
         versionCatalogFile.file
         versionCatalogFile.text == toPlatformLineSeparators("""$COMMON_START
 [versions]
-artifact-v5 = "1.1.1"
 group-artifact-v5 = "1.1.1"
-junit = "4"
 junit-something = "4"
 
 [libraries]
-artifact-v5 = { module = "something:artifact_5", version.ref = "artifact-v5" }
 group-artifact-v5 = { module = "group:artifact_5", version.ref = "group-artifact-v5" }
-junit = { module = "something:JUnit", version.ref = "junit" }
 junit-something = { module = "JUnit:something", version.ref = "junit-something" }
 """)
     }
 
     def "generates plugin"() {
         setup:
-        versionCatalogDependencyRegistry.registerPlugin(true, "com.example.long", "1337")
-        versionCatalogDependencyRegistry.registerPlugin(false, "com.example.short", "42")
+        versionCatalogDependencyRegistry.registerPlugin("com.example.long", "1337")
 
         when:
         versionCatalogGenerator.generate(buildContentGenerationContext)
@@ -162,7 +143,6 @@ junit-something = { module = "JUnit:something", version.ref = "junit-something" 
         versionCatalogFile.text == toPlatformLineSeparators("""$COMMON_START
 [plugins]
 com-example-long = { id = "com.example.long", version = "1337" }
-short = { id = "com.example.short", version = "42" }
 """)
     }
 }

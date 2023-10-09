@@ -162,7 +162,7 @@ public class BuildScriptBuilder {
     public BuildScriptBuilder plugin(@Nullable String comment, String pluginId, @Nullable String version) {
         AbstractStatement plugin;
         if (useVersionCatalog && version != null) {
-            String versionCatalogRef = buildContentGenerationContext.getVersionCatalogDependencyRegistry().registerPlugin(false, pluginId, version);
+            String versionCatalogRef = buildContentGenerationContext.getVersionCatalogDependencyRegistry().registerPlugin(pluginId, version);
             plugin = new PluginSpec(versionCatalogRef, comment);
         } else {
             plugin = new PluginSpec(pluginId, version, comment);
@@ -1170,7 +1170,7 @@ public class BuildScriptBuilder {
             StatementGroup statementGroup = new StatementGroup(comment);
             for (BuildInitDependency d : dependencies) {
                 if (d.version != null && buildScriptBuilder.useVersionCatalog) {
-                    String versionCatalogRef = buildScriptBuilder.buildContentGenerationContext.getVersionCatalogDependencyRegistry().registerLibrary(d.isFullyQualifyAliases(), d.module, d.version);
+                    String versionCatalogRef = buildScriptBuilder.buildContentGenerationContext.getVersionCatalogDependencyRegistry().registerLibrary(d.module, d.version);
                     statementGroup.add(new DepSpec(configuration, null, versionCatalogRef, true));
                 } else {
                     statementGroup.add(new DepSpec(configuration, null, d.toNotation(), false));
@@ -1184,7 +1184,7 @@ public class BuildScriptBuilder {
             StatementGroup statementGroup = new StatementGroup(comment);
             for (BuildInitDependency d : dependencies) {
                 if (d.version != null && buildScriptBuilder.useVersionCatalog) {
-                    String versionCatalogRef = buildScriptBuilder.buildContentGenerationContext.getVersionCatalogDependencyRegistry().registerLibrary(d.isFullyQualifyAliases(), d.module, d.version);
+                    String versionCatalogRef = buildScriptBuilder.buildContentGenerationContext.getVersionCatalogDependencyRegistry().registerLibrary(d.module, d.version);
                     statementGroup.add(new PlatformDepSpec(configuration, comment, versionCatalogRef, true));
                 } else {
                     statementGroup.add(new PlatformDepSpec(configuration, comment, d.toNotation(), false));

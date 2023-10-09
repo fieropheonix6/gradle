@@ -23,7 +23,7 @@ import static org.gradle.buildinit.plugins.internal.modifiers.BuildInitDsl.KOTLI
 class BuildScriptBuilderKotlinTest extends AbstractBuildScriptBuilderTest {
 
     def builder = new BuildScriptBuilderFactory(new DocumentationRegistry()).scriptForNewProjectsWithoutVersionCatalog(KOTLIN,
-        new BuildContentGenerationContext(new VersionCatalogDependencyRegistry()), "build", false)
+        new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(true)), "build", false)
 
     TestFile outputFile = tmpDir.file("build.gradle.kts")
 
@@ -41,7 +41,7 @@ class BuildScriptBuilderKotlinTest extends AbstractBuildScriptBuilderTest {
     def "generates basic kotlin build script with @Incubating APIs warning"() {
         given:
         def builderUsingIncubating = new BuildScriptBuilderFactory(new DocumentationRegistry()).scriptForNewProjectsWithoutVersionCatalog(KOTLIN,
-            new BuildContentGenerationContext(new VersionCatalogDependencyRegistry()), "build", true)
+            new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(true)), "build", true)
 
         when:
         builderUsingIncubating.create(target).generate()

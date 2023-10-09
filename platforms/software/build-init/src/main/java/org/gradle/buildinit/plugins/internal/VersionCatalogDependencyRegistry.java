@@ -36,9 +36,15 @@ import java.util.regex.Pattern;
 public class VersionCatalogDependencyRegistry {
     private static final Pattern RESERVED_LIBRARY_PREFIX = Pattern.compile("^(" + String.join("|", DefaultVersionCatalogBuilder.FORBIDDEN_LIBRARY_ALIAS_PREFIX) + ")[- ]");
     private static final Pattern RESERVED_ALIAS_COMPONENT = Pattern.compile("(^|-)(" + String.join("|", Sets.union(DefaultVersionCatalogBuilder.RESERVED_ALIAS_NAMES, DefaultVersionCatalogBuilder.RESERVED_JAVA_NAMES)) + ")($|[- ])");
-    final Map<String, VersionEntry> versions = new TreeMap<>();
-    final Map<String, LibraryEntry> libraries = new TreeMap<>();
-    final Map<String, PluginEntry> plugins = new TreeMap<>();
+    private final Map<String, VersionEntry> versions = new TreeMap<>();
+    private final Map<String, LibraryEntry> libraries = new TreeMap<>();
+    private final Map<String, PluginEntry> plugins = new TreeMap<>();
+
+    private final boolean fullyQualifiedAliases;
+
+    public VersionCatalogDependencyRegistry(boolean fullyQualifiedAliases) {
+        this.fullyQualifiedAliases = fullyQualifiedAliases;
+    }
 
     public Collection<VersionEntry> getVersions() {
         return versions.values();
@@ -52,15 +58,15 @@ public class VersionCatalogDependencyRegistry {
         return plugins.values();
     }
 
-    public String registerLibrary(boolean fullyQualify, String module, String version) {
-        String alias = fullyQualify ? moduleToAlias(module) : artifactToAlias(module);
+    public String registerLibrary(String module, String version) {
+        String alias = fullyQualifiedAliases ? moduleToAlias(module) : artifactToAlias(module);
         VersionEntry versionEntry = findOrCreateVersionEntry(alias, module, version);
         LibraryEntry libraryEntry = findOrCreateLibraryEntry(alias, module, versionEntry);
         return "libs." + libraryEntry.alias.replaceAll("-", ".");
     }
 
-    public String registerPlugin(boolean fullyQualify, String pluginId, String version) {
-        String alias = fullyQualify ? moduleToAlias(pluginId) : pluginIdToAlias(pluginId);
+    public String registerPlugin(String pluginId, String version) {
+        String alias = fullyQualifiedAliases ? moduleToAlias(pluginId) : pluginIdToAlias(pluginId);
         PluginEntry pluginEntry = findOrCreatePluginEntry(alias, pluginId, version);
         return "libs.plugins." + pluginEntry.alias.replaceAll("-", ".");
     }
@@ -121,11 +127,11 @@ public class VersionCatalogDependencyRegistry {
     }
 
     private static String moduleToAlias(String module) {
-        String normalizedModule = module.replaceAll("[\\.:_]", "-").replaceAll("-(\\d)", "-v$1");
+        String normalizedModule = module.replaceAll("[.:_]", "-").replaceAll("-(\\d)", "-v$1");
         String alias = normalizedModule.substring(0, Math.min(2, normalizedModule.length())).toLowerCase(Locale.ENGLISH) + normalizedModule.substring(Math.min(2, normalizedModule.length()));
         StringBuffer resultingAlias = new StringBuffer();
         Matcher reservedComponentsMatcher = RESERVED_ALIAS_COMPONENT.matcher(alias);
-        while(reservedComponentsMatcher.find()) {
+        while (reservedComponentsMatcher.find()) {
             reservedComponentsMatcher.appendReplacement(resultingAlias, "$1my" + TextUtil.capitalize(reservedComponentsMatcher.group(2)) + "$3");
         }
         reservedComponentsMatcher.appendTail(resultingAlias);

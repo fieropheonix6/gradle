@@ -84,7 +84,7 @@ public class Maven2Gradle {
     }
 
     public void convert() {
-        BuildContentGenerationContext buildContentGenerationContext = new BuildContentGenerationContext(new VersionCatalogDependencyRegistry());
+        BuildContentGenerationContext buildContentGenerationContext = new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(true));
         boolean multimodule = !rootProject.getModules().isEmpty();
 
         if (multimodule) {

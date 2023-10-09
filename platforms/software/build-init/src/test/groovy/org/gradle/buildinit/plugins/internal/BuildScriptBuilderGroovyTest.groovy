@@ -24,7 +24,7 @@ import static org.gradle.buildinit.plugins.internal.modifiers.BuildInitDsl.GROOV
 
 class BuildScriptBuilderGroovyTest extends AbstractBuildScriptBuilderTest {
     def builder = new BuildScriptBuilderFactory(new DocumentationRegistry()).scriptForNewProjectsWithoutVersionCatalog(GROOVY,
-        new BuildContentGenerationContext(new VersionCatalogDependencyRegistry()), "build", false)
+        new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(true)), "build", false)
 
     TestFile outputFile = tmpDir.file("build.gradle")
 
@@ -63,7 +63,7 @@ java {
         given:
         def builderUsingIncubating = new BuildScriptBuilderFactory(new DocumentationRegistry())
             .scriptForNewProjectsWithoutVersionCatalog(GROOVY,
-                new BuildContentGenerationContext(new VersionCatalogDependencyRegistry()), "build", true)
+                new BuildContentGenerationContext(new VersionCatalogDependencyRegistry(true)), "build", true)
 
         when:
         builderUsingIncubating.create(target).generate()
