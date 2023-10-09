@@ -230,7 +230,7 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
             $className().foo()
             """
         )
-        configureProjectAndExpectCompileAvoidanceWarnings().assertBuildScriptCompiled().assertOutputContains("foo = 4")
+        configureProject().assertBuildScriptCompiled().assertOutputContains("foo = 4")
 
         existing(jarPath).setLastModified(1)
         configureProject().assertBuildScriptCompilationAvoided().assertOutputContains("foo = 4")
@@ -263,23 +263,23 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
         val className = givenKotlinClassInBuildSrcContains(
             """
             inline fun foo() {
-                val sum: (Int, Int) -> Int = { x, y -> x + y }
-                println("foo = " + sum(2, 2))
+                val aggregate: (Int, Int) -> Int = { x, y -> x + y }
+                println("foo = " + aggregate(2, 2))
             }
             """
         )
         withUniqueScript("$className().foo()")
-        configureProjectAndExpectCompileAvoidanceWarnings().assertBuildScriptCompiled().assertOutputContains("foo = 4")
+        configureProject().assertBuildScriptCompiled().assertOutputContains("foo = 4")
 
         givenKotlinClassInBuildSrcContains(
             """
             inline fun foo() {
-                val sum: (Int, Int) -> Int = { x, y -> x - y }
-                println("foo = " + sum(2, 2))
+                val aggregate: (Int, Int) -> Int = { x, y -> x - y }
+                println("foo = " + aggregate(2, 2))
             }
             """
         )
-        configureProject().assertBuildScriptCompiled().assertOutputContains("foo = 0")
+        configureProject().assertBuildScriptCompiled().assertOutputContains("foo = 0") // TODO: create reproducer, report
     }
 
     @Test
@@ -295,11 +295,11 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
         )
         withUniqueScript("$className().foo()")
         val resourceFile = withFile("buildSrc/src/main/resources/foo.txt", "foo")
-        configureProjectAndExpectCompileAvoidanceWarnings().assertBuildScriptCompiled().assertOutputContains("foo")
+        configureProject().assertBuildScriptCompiled().assertOutputContains("foo")
 
         resourceFile.setLastModified(1)
         resourceFile.setReadOnly()
-        configureProjectAndExpectCompileAvoidanceWarnings().assertBuildScriptCompilationAvoided().assertOutputContains("foo")
+        configureProject().assertBuildScriptCompilationAvoided().assertOutputContains("foo")
     }
 
     @Test
@@ -323,7 +323,7 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
             }
             """
         )
-        configureProject().assertBuildScriptCompilationAvoided().assertOutputContains("bar")
+        configureProject().assertBuildScriptCompilationAvoided().assertOutputContains("bar") // TODO: report and ask
     }
 
     @Test
@@ -472,7 +472,7 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
             "@kotlin.Metadata(k=42, mv={1, 4, 0})"
         )
         configureProject().assertBuildScriptBodyRecompiled().assertOutputContains("foo")
-    }
+    } // TODO: delete test
 
     @Test
     fun `avoids recompiling buildscript when not able to determine Kotlin metadata kind for unchanged class on buildscript classpath`() {
@@ -487,7 +487,7 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
         withUniqueScript("println(\"foo\")")
         configureProject().assertBuildScriptCompiled().assertOutputContains("foo")
         configureProject().assertBuildScriptCompilationAvoided()
-    }
+    } // TODO: delete this test
 
     private
     fun buildJarForBuildScriptClasspath(classBody: String): Pair<String, String> {
