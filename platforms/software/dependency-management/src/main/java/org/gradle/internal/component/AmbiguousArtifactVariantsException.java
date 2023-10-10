@@ -16,9 +16,11 @@
 
 package org.gradle.internal.component;
 
+import org.gradle.api.internal.DocumentationRegistry;
+
 @SuppressWarnings("deprecation")
 public class AmbiguousArtifactVariantsException extends org.gradle.internal.component.AmbiguousVariantSelectionException {
-    public AmbiguousArtifactVariantsException(String message) {
-        super(message);
+    public AmbiguousArtifactVariantsException(String message, DocumentationRegistry documentationRegistry) {
+        super(message, documentationRegistry);
     }
 }
