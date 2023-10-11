@@ -17,6 +17,8 @@
 package org.gradle.integtests.internal.component
 
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
+import org.gradle.test.fixtures.dsl.GradleDsl
+
 /**
  * These tests demonstrate the behavior of the [SelectionFailureHandler] when a project has various
  * variant selection failures.
@@ -44,6 +46,23 @@ class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
         fails "outgoingVariants", "forceResolution"
         failure.assertHasDescription("Could not determine the dependencies of task ':forceResolution'.")
         failure.assertHasErrorOutput("Incompatible because this component declares attribute 'color' with value 'blue' and the consumer needed attribute 'color' with value 'green'")
+    }
+
+    /**
+     * Running the dependencyInsight report can also generate a variant selection failure, but this
+     * does <strong>NOT</strong> cause the task to fail.
+     */
+    def "demonstrate dependencyInsight report containing no matching capabilities failure"() {
+        buildKotlinFile << """
+            ${setupDependencyInsightFailure()}
+        """
+
+        expect:
+        succeeds "dependencyInsight", "--configuration", "compileClasspath", "--dependency", "gson"
+        result.assertOutputContains("Could not resolve com.google.code.gson:gson:2.8.5.")
+        result.assertOutputContains("""Failures:
+      - Could not resolve com.google.code.gson:gson:2.8.5.
+        Review the variant matching algorithm documentation at https://docs.gradle.org/8.5-20231011040000+0000/userguide/variant_attributes.html#abm_algorithm:""")
     }
 
     private String setupAmbiguousVariantSelectionFailureForProject() {
@@ -100,6 +119,23 @@ class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
 
             dependencies {
                 add("defaultDependencies", project(":"))
+            }
+        """
+    }
+
+    private String setupDependencyInsightFailure() {
+        return """
+            plugins {
+                `java-library`
+                `java-test-fixtures`
+            }
+
+            ${mavenCentralRepository(GradleDsl.KOTLIN)}
+
+            dependencies {
+                // Adds a dependency on the test fixtures of Gson, however this
+                // project doesn't publish such a thing
+                implementation(testFixtures("com.google.code.gson:gson:2.8.5"))
             }
         """
     }
