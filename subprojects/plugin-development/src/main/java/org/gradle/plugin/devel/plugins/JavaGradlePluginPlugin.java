@@ -256,6 +256,9 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
     }
 
     private void configurePluginValidations(Project project, GradlePluginDevelopmentExtension extension) {
+//        extension.
+        //        pluginSourceSet.getAllSource().forEach(file -> LOGGER.warn("file: {}", file));
+//        pluginSourceSet.
         TaskProvider<ValidatePlugins> validatorTask = project.getTasks().register(VALIDATE_PLUGINS_TASK_NAME, ValidatePlugins.class, task -> {
             task.setGroup(PLUGIN_DEVELOPMENT_GROUP);
             task.setDescription(VALIDATE_PLUGIN_TASK_DESCRIPTION);
@@ -264,6 +267,7 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
 
             task.getClasses().setFrom((Callable<Object>) () -> extension.getPluginSourceSet().getOutput().getClassesDirs());
             task.getClasspath().setFrom((Callable<Object>) () -> extension.getPluginSourceSet().getCompileClasspath());
+            task.getSourceSet().setFrom((Callable<Object>) () -> extension.getPluginSourceSet().getJava());
 
             task.getLauncher().convention(toolchainLauncher(project));
         });
