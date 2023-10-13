@@ -38,6 +38,7 @@ import org.gradle.internal.classpath.types.InstrumentingTypeRegistry;
 import org.gradle.internal.file.Stat;
 import org.gradle.util.internal.GFileUtils;
 import org.gradle.work.DisableCachingByDefault;
+import org.gradle.work.InputChanges;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -53,6 +54,13 @@ public abstract class InstrumentArtifactTransform implements TransformAction<Ins
         ConfigurableFileCollection getClassHierarchy();
     }
 
+    /**
+     * Currently used just to workaround locking issue, when we try to delete the file in RemovePreviousOutputsStep
+     * when a jar is still loaded by another process.
+     */
+    @Inject
+    public abstract InputChanges getInputChanges();
+
     @Inject
     public abstract ObjectFactory getObjects();
 
@@ -67,7 +75,6 @@ public abstract class InstrumentArtifactTransform implements TransformAction<Ins
     @Override
     public void transform(TransformOutputs outputs) {
         if (!getInputAsFile().exists()) {
-            System.out.println("Debug1: " + getInputAsFile() + " does not exist");
             // Don't instrument files that don't exist, these could be files added to classpath via files()
             return;
         }
@@ -76,6 +83,10 @@ public abstract class InstrumentArtifactTransform implements TransformAction<Ins
         String instrumentedJarName = getInput().get().getAsFile().getName().replaceFirst("\\.jar$", TransformedClassPath.INSTRUMENTED_JAR_EXTENSION);
         InstrumentationServices instrumentationServices = getObjects().newInstance(InstrumentationServices.class);
         File outputFile = outputs.file(instrumentedJarName);
+        if (outputFile.exists()) {
+            // Output file already exists, nothing to do
+            return;
+        }
 
         // TODO: Copy in a separate transform
         File copyOfOriginalFile = outputs.file(getInputAsFile().getName());
