@@ -59,8 +59,8 @@ class SelectionFailureHandlerIntegrationTest extends AbstractIntegrationSpec {
 
         expect:
         succeeds "dependencyInsight", "--configuration", "compileClasspath", "--dependency", "gson"
-        result.assertOutputContains("Could not resolve com.google.code.gson:gson:2.8.5.")
-        result.assertOutputContains("""Failures:
+        outputContains("Could not resolve com.google.code.gson:gson:2.8.5.")
+        outputContains("""Failures:
       - Could not resolve com.google.code.gson:gson:2.8.5.
         Review the variant matching algorithm documentation at https://docs.gradle.org/8.5-20231011040000+0000/userguide/variant_attributes.html#abm_algorithm:""")
     }
