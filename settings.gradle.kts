@@ -157,6 +157,7 @@ platform("software") {
     subproject("security")
     subproject("signing")
     subproject("testing-base")
+    subproject("test-suites-base")
     subproject("version-control")
 }
 
