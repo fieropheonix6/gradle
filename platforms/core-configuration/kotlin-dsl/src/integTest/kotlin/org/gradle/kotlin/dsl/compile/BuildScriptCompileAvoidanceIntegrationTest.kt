@@ -303,7 +303,7 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
     }
 
     @Test
-    fun `buildscript is recompiled on internal inline function change in buildSrc class`() {
+    fun `avoids buildscript recompilation on internal inline function change in buildSrc class`() {
         val className = givenKotlinClassInBuildSrcContains(
             """
             fun foo() = bar()
@@ -319,30 +319,6 @@ class BuildScriptCompileAvoidanceIntegrationTest : AbstractCompileAvoidanceInteg
             """
             fun foo() = bar()
             internal inline fun bar() {
-                println("bar")
-            }
-            """
-        )
-        configureProject().assertBuildScriptCompiled().assertOutputContains("bar")
-    }
-
-    @Test
-    fun `avoids buildscript recompilation on private inline function change in buildSrc class`() {
-        val className = givenKotlinClassInBuildSrcContains(
-            """
-            fun foo() = bar()
-            private inline fun bar() {
-                println("foo")
-            }
-            """
-        )
-        withUniqueScript("$className().foo()")
-        configureProject().assertBuildScriptCompiled().assertOutputContains("foo")
-
-        givenKotlinClassInBuildSrcContains(
-            """
-            fun foo() = bar()
-            private inline fun bar() {
                 println("bar")
             }
             """
