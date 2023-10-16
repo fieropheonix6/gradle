@@ -126,6 +126,13 @@ class IntegTestPreconditions {
         }
     }
 
+    static final class NotIsolatedProjects implements TestPrecondition {
+        @Override
+        boolean isSatisfied() throws Exception {
+            return GradleContextualExecuter.isNotIsolatedProjects()
+        }
+    }
+
     static class Java7HomeAvailable implements TestPrecondition {
         @Override
         boolean isSatisfied() throws Exception {
@@ -194,74 +201,11 @@ class IntegTestPreconditions {
         }
     }
 
-    static class Java9HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(9)
-            )
-        }
-    }
-
-    static class Java10HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(10)
-            )
-        }
-    }
-
     static class Java11HomeAvailable implements TestPrecondition {
         @Override
         boolean isSatisfied() throws Exception {
             return AvailableJavaHomes.getJdk(
                 JavaVersion.toVersion(11)
-            )
-        }
-    }
-
-    static class Java12HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(12)
-            )
-        }
-    }
-
-    static class Java13HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(13)
-            )
-        }
-    }
-
-    static class Java14HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(14)
-            )
-        }
-    }
-
-    static class Java15HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(15)
-            )
-        }
-    }
-
-    static class Java16HomeAvailable implements TestPrecondition {
-        @Override
-        boolean isSatisfied() throws Exception {
-            return AvailableJavaHomes.getJdk(
-                JavaVersion.toVersion(16)
             )
         }
     }
@@ -352,6 +296,17 @@ class IntegTestPreconditions {
         }
     }
 
+    static class Jdk17FromMultipleVendors implements TestPrecondition {
+        @Override
+        boolean isSatisfied() throws Exception {
+            return AvailableJavaHomes.getAvailableJvmMetadatas().stream()
+                .filter(metadata -> JavaVersion.VERSION_17 == metadata.languageVersion)
+                .map {metadata -> metadata.vendor.rawVendor }
+                .distinct()
+                .count() >= 2
+        }
+    }
+
     static class DifferentJdkAvailable implements TestPrecondition {
         @Override
         boolean isSatisfied() throws Exception {
@@ -406,7 +361,7 @@ class IntegTestPreconditions {
     static final class Groovy3OrEarlier implements TestPrecondition {
         @Override
         boolean isSatisfied() throws Exception {
-            return VersionNumber.parse(GroovySystem.version).major < 3
+            return VersionNumber.parse(GroovySystem.version).major <= 3
         }
     }
 }
