@@ -404,7 +404,7 @@ class JavaToolchainBuildOperationsIntegrationTest extends AbstractIntegrationSpe
         // e: Unknown JVM target version: 21
         // Supported versions: 1.6, 1.8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
         JvmInstallationMetadata jdkMetadata = AvailableJavaHomes.getJvmInstallationMetadata(AvailableJavaHomes.getDifferentVersion({
-            it.languageVersion.majorVersionNumber <= 17
+            it.languageVersion.majorVersion.toInteger() <= 17
         }))
 
         given:
@@ -499,7 +499,7 @@ class JavaToolchainBuildOperationsIntegrationTest extends AbstractIntegrationSpe
         then:
         executedAndNotSkipped(":compileKotlin", ":test")
         println(eventsOnCompile)
-        if (isKotlin1dot8) {
+        if (isKotlin1dot8 && GradleContextualExecuter.notConfigCache) {
             // Kotlin 1.8 uses both launcher and compiler
             assertToolchainUsages(eventsOnCompile, jdkMetadata, "JavaLauncher", "JavaCompiler")
         } else {

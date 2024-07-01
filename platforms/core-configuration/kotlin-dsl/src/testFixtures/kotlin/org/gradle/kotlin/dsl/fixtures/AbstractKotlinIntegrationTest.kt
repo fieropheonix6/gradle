@@ -121,7 +121,7 @@ abstract class AbstractKotlinIntegrationTest : AbstractIntegrationTest() {
     private
     val futurePluginVersions by lazy {
         loadPropertiesFromResource("/future-plugin-versions.properties")
-            ?: throw IllegalStateException("/future-plugin-versions.properties resource not found.")
+            ?: error("/future-plugin-versions.properties resource not found.")
     }
 
     protected
@@ -333,9 +333,9 @@ abstract class AbstractKotlinIntegrationTest : AbstractIntegrationTest() {
         inDirectory(rootDir).withArguments(*arguments)
 
     protected
-    inline fun withOwnGradleUserHomeDir(reason: String, block: () -> Unit) {
+    inline fun <T> withOwnGradleUserHomeDir(reason: String, block: () -> T): T {
         executer.requireOwnGradleUserHomeDir(reason)
-        try {
+        return try {
             block()
         } finally {
             // wait for all daemons to shut down so the test dir can be deleted

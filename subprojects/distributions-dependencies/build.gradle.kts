@@ -15,13 +15,13 @@ plugins {
 
 description = "Provides a platform dependency to align all distribution versions"
 
-val antVersion = "1.10.13"
+val antVersion = "1.10.14"
 // Don't forget to bump versions in
 // subprojects/base-services/src/main/java/org/gradle/internal/classanalysis/AsmConstants.java
 // when upgrading ASM.
 val asmVersion = "9.7"
 val awsS3Version = "1.12.651"
-val bouncycastleVersion = "1.77"
+val bouncycastleVersion = "1.78.1"
 val jacksonVersion = "2.16.1"
 val jaxbVersion = "3.0.0"
 val junit5Version = "5.8.2"
@@ -72,6 +72,7 @@ dependencies {
         api(libs.commonsMath)           { version { strictly("3.6.1") }}
         api(libs.eclipseSisuPlexus)     { version { strictly("0.3.5"); because("transitive dependency of Maven modules to process POM metadata") }}
         api(libs.errorProneAnnotations) { version { strictly("2.26.1") }}
+        api(libs.fastutil)              { version { strictly("8.5.2") }}
         api(libs.gradleProfiler)        { version { strictly("0.21.0-alpha-4") }}
         api(libs.develocityTestAnnotation) { version { strictly("2.0.1") }}
         api(libs.gcs)                   { version { strictly("v1-rev20220705-1.32.1") }}
@@ -151,7 +152,7 @@ dependencies {
         api(libs.plist)                 { version { strictly("1.27") }}
         api(libs.servletApi)            { version { strictly("3.1.0") }}
         api(libs.slf4jApi)              { version { strictly(slf4jVersion) }}
-        api(libs.slf4jSimple)           { version { strictly(slf4jVersion) }}
+        api(libs.slf4jSimple)           { version { rejectAll(); because("We only need the logging API, we supply our own binding, which cause duplicate binding on class path error") }}
         api(libs.snakeyaml)             { version { strictly("2.0") }}
         api(libs.testng)                { version { strictly("6.3.1"); because("later versions break test cross-version test filtering") }}
         api(libs.tomlj)                 { version { strictly(tomljVersion) }}

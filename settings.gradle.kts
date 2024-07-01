@@ -28,10 +28,9 @@ pluginManagement {
 
 plugins {
     id("gradlebuild.build-environment")
-    id("com.gradle.develocity").version("3.17.4") // Sync with `build-logic-commons/build-platform/build.gradle.kts`
+    id("com.gradle.develocity").version("3.17.5") // Sync with `build-logic-commons/build-platform/build.gradle.kts`
     id("io.github.gradle.gradle-enterprise-conventions-plugin").version("0.10.1")
     id("org.gradle.toolchains.foojay-resolver-convention") version ("0.8.0")
-//    id("net.ltgt.errorprone").version("3.1.0")
 }
 
 includeBuild("build-logic-commons")
@@ -51,6 +50,11 @@ unassigned {
 // Gradle Distributions - for testing and for publishing a full distribution
 unassigned {
     subproject("distributions-full")
+}
+
+// Public API publishing
+unassigned {
+    subproject("public-api")
 }
 
 // Gradle implementation projects
@@ -88,13 +92,15 @@ val core = platform("core") {
         subproject("files")
         subproject("functional")
         subproject("gradle-cli-main")
+        subproject("gradle-cli")
         subproject("installation-beacon")
         subproject("instrumentation-agent")
+        subproject("instrumentation-agent-services")
         subproject("instrumentation-declarations")
         subproject("internal-instrumentation-api")
         subproject("internal-instrumentation-processor")
         subproject("io")
-        subproject("java-language-extensions")
+        subproject("stdlib-java-extensions")
         subproject("launcher")
         subproject("logging")
         subproject("logging-api")
@@ -102,7 +108,10 @@ val core = platform("core") {
         subproject("native")
         subproject("process-services")
         subproject("serialization")
+        subproject("service-lookup")
         subproject("service-provider")
+        subproject("service-registry-builder")
+        subproject("service-registry-impl")
         subproject("time")
         subproject("tooling-api-provider")
         subproject("wrapper-main")
@@ -113,10 +122,12 @@ val core = platform("core") {
     module("core-configuration") {
         subproject("api-metadata")
         subproject("base-services-groovy")
+        subproject("bean-serialization-services")
         subproject("configuration-cache")
         subproject("configuration-cache-base")
         subproject("configuration-problems-base")
         subproject("core-kotlin-extensions")
+        subproject("core-serialization-codecs")
         subproject("declarative-dsl-api")
         subproject("declarative-dsl-core")
         subproject("declarative-dsl-evaluator")
@@ -124,6 +135,7 @@ val core = platform("core") {
         subproject("declarative-dsl-tooling-models")
         subproject("declarative-dsl-tooling-builders")
         subproject("dependency-management-serialization-codecs")
+        subproject("encryption-services")
         subproject("file-collections")
         subproject("flow-services")
         subproject("graph-serialization")
@@ -282,6 +294,7 @@ testing {
     subproject("internal-testing")
     subproject("performance")
     subproject("precondition-tester")
+    subproject("public-api-tests")
     subproject("soak")
     subproject("smoke-ide-test") // eventually should be owned by IDEX team
     subproject("smoke-test")
