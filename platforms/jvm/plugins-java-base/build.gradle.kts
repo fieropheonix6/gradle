@@ -60,6 +60,9 @@ dependencies {
 
     testFixturesImplementation(projects.internalIntegTesting)
     testFixturesImplementation(projects.logging)
+
+    // Javadoc-only: downstream modules whose types are referenced by {@link ...} in this module's docs.
+    javadocReferences(projects.pluginsJava)
 }
 
 gradleModule {

@@ -50,6 +50,16 @@ dependencies {
     testFixturesImplementation(projects.baseServices)
 
     integTestDistributionRuntimeOnly(projects.distributionsBasics)
+
+    // Javadoc-only: downstream modules whose types are referenced by {@link ...} in this module's docs.
+    javadocReferences(projects.core)
+    javadocReferences(projects.modelCore)
+    javadocReferences(projects.dependencyManagement)
+    javadocReferences(projects.testingBase)
+    javadocReferences(projects.testingJvm)
+    javadocReferences(projects.kotlinDsl)
+    javadocReferences(projects.coreFlowServicesApi)
+    javadocReferences(libs.groovyTemplates) // for groovy.text.SimpleTemplateEngine references in ContentFilterable / ExpandDetails
 }
 
 gradleModule {
