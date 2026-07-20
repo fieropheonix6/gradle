@@ -61,10 +61,6 @@ gradleModule {
     }
 }
 
-packageCycles {
-    excludePatterns.add("org/gradle/**")
-}
-
 strictCompile {
     ignoreRawTypes() // raw types used in public API
 }
@@ -72,4 +68,3 @@ strictCompile {
 // AutoTestedSamplesCoreApiIntegrationTest includes customized test logic, so automatic auto testing samples generation is not needed (and would fail) in this project
 integTest.generateDefaultAutoTestedSamplesTest = false
 testFilesCleanup.reportOnly = true
-

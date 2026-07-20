@@ -316,10 +316,7 @@ fun configureTests() {
         jvmArgumentProviders.add(CiEnvironmentProvider(this))
         runWithJavaVersion(JavaLanguageVersion.of(project.testJavaVersion))
 
-        if (name != "archTest") {
-            // TODO distinguish archTest and other tests
-            addOsAsInputs()
-        }
+        addOsAsInputs()
         configureRerun()
 
         if (BuildEnvironment.isCiServer) {

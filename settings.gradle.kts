@@ -325,7 +325,6 @@ testing {
     subproject("distributions-core")
     subproject("distributions-integ-tests")
     subproject("integ-test")
-    subproject("internal-architecture-testing")
     subproject("internal-distribution-testing")
     subproject("internal-integ-testing")
     subproject("internal-performance-testing")
@@ -345,4 +344,3 @@ FeaturePreviews.Feature.entries.forEach { feature ->
         enableFeaturePreview(feature.name)
     }
 }
-

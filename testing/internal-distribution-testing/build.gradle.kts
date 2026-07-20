@@ -132,9 +132,3 @@ abstract class PrepareVersionsInfo : DefaultTask() {
         gradlebuild.basics.util.ReproduciblePropertiesWriter.store(properties, destFile.get().asFile)
     }
 }
-
-packageCycles {
-    excludePatterns.add("org/gradle/**")
-}
-
-
