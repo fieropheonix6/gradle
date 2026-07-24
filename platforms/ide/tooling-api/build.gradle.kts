@@ -127,10 +127,6 @@ strictCompile {
     ignoreRawTypes() // raw types used in public API
 }
 
-packageCycles {
-    excludePatterns.add("org/gradle/tooling/**")
-}
-
 testFilesCleanup.reportOnly = true
 
 apply(from = "buildship.gradle")

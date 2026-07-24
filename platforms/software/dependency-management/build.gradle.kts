@@ -159,10 +159,6 @@ gradleModule {
     }
 }
 
-packageCycles {
-    excludePatterns.add("org/gradle/**")
-}
-
 testFilesCleanup.reportOnly = true
 
 tasks.clean {

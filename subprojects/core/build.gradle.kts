@@ -284,10 +284,6 @@ strictCompile {
     ignoreAnnotationProcessing() // Without this, javac will complain about unclaimed annotations
 }
 
-packageCycles {
-    excludePatterns.add("org/gradle/**")
-}
-
 tasks.test {
     setForkEvery(200)
 }

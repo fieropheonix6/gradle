@@ -44,9 +44,3 @@ gradleModule {
         worker = true
     }
 }
-
-packageCycles {
-    excludePatterns.add("org/gradle/api/internal/tasks/testing/**")
-}
-
-

@@ -69,9 +69,3 @@ jvmCompile {
         }
     }
 }
-
-
-
-packageCycles {
-    excludePatterns.add("org/gradle/api/problems/**") // ProblemId.create() and ProblemGroup.create() return internal types
-}

@@ -73,12 +73,6 @@ sourceSets.main {
     resources.srcDir(files(runtimeApiInfoDir) { builtBy(generateTestKitPackageList) })
 }
 
-packageCycles {
-    excludePatterns.add("org/gradle/testkit/runner/internal/**")
-}
-
 tasks.integMultiVersionTest {
     systemProperty("org.gradle.integtest.testkit.compatibility", "all")
 }
-
-
