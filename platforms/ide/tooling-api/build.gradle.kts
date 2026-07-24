@@ -91,6 +91,10 @@ dependencies {
     crossVersionTestLocalRepository(project(path)) {
         because("ToolingApiVersionSpecification uses the Tooling API Jar")
     }
+
+    // Javadoc-only: downstream modules whose types are referenced by {@link ...} in this module's docs.
+    javadocReferences(projects.coreApi)
+    javadocReferences(projects.startParameter) // for org.gradle.StartParameter
 }
 
 gradleModule {
